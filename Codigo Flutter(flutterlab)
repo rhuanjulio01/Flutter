@@ -1,0 +1,356 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => LoginPage(),
+        '/home': (context) => HomePage(),
+        '/details': (context) => ProjectDetailsPage(),
+        '/create_project': (context) => NewProjectPage(),
+        '/in_progress': (context) => InProgressProjectsPage(),
+      },
+    );
+  }
+}
+
+// Classe para representar um projeto
+class Project {
+  String name;
+  String description;
+  String startDate;
+  String status;
+
+  Project({
+    required this.name,
+    required this.description,
+    required this.startDate,
+    required this.status,
+  });
+}
+
+// Lista global para armazenar projetos em andamento
+List<Project> inProgressProjects = [];
+
+// Página de Login
+class LoginPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF004347),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Login',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 40),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF004347),
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/home');
+                },
+                child: const Text('Entrar', style: TextStyle(fontSize: 18)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Página Home
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF004347),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Bem-vindo ao Gerenciador de Projetos',
+          style: TextStyle(color: Color(0xFF004347)),
+        ),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF004347),
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/create_project');
+                },
+                child:
+                    const Text('Criar Projeto', style: TextStyle(fontSize: 18)),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF004347),
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/in_progress');
+                },
+                child: const Text('Projetos em Andamento',
+                    style: TextStyle(fontSize: 18)),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF004347),
+                  minimumSize: const Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/details');
+                },
+                child:
+                    const Text('Ver Detalhes', style: TextStyle(fontSize: 18)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Página de Projetos em Andamento
+class InProgressProjectsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF004347),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Projetos em Andamento',
+          style: TextStyle(color: Color(0xFF004347)),
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: inProgressProjects.length,
+        itemBuilder: (context, index) {
+          final project = inProgressProjects[index];
+          return ListTile(
+            title: Text(project.name, style: TextStyle(color: Colors.white)),
+            subtitle: Text(
+              'Descrição: ${project.description}',
+              style: TextStyle(color: Colors.white),
+            ),
+            trailing: Text(
+              'Status: ${project.status}',
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              // Navegação para a página de detalhes, passando o projeto como argumento
+              Navigator.pushNamed(
+                context,
+                '/details',
+                arguments: project,
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+// Página para Criar Novo Projeto
+class NewProjectPage extends StatefulWidget {
+  @override
+  _NewProjectPageState createState() => _NewProjectPageState();
+}
+
+class _NewProjectPageState extends State<NewProjectPage> {
+  final TextEditingController _projectNameController = TextEditingController();
+  final TextEditingController _projectDescriptionController =
+      TextEditingController();
+  final TextEditingController _projectStartDateController =
+      TextEditingController();
+  String _selectedStatus = 'Pendente';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF004347),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Criar Novo Projeto',
+          style: TextStyle(color: Color(0xFF004347)),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Nome do Projeto:',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            TextField(
+              controller: _projectNameController,
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Descrição:',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            TextField(
+              controller: _projectDescriptionController,
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Data de Início:',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            TextField(
+              controller: _projectStartDateController,
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            DropdownButton<String>(
+              dropdownColor: const Color(0xFF004347),
+              value: _selectedStatus,
+              items: ['Pendente', 'Em andamento', 'Concluído']
+                  .map((status) => DropdownMenuItem(
+                        value: status,
+                        child:
+                            Text(status, style: TextStyle(color: Colors.white)),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedStatus = value!;
+                });
+              },
+            ),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF004347),
+                ),
+                onPressed: () {
+                  if (_projectNameController.text.isNotEmpty) {
+                    // Criar o projeto
+                    Project newProject = Project(
+                      name: _projectNameController.text,
+                      description: _projectDescriptionController.text,
+                      startDate: _projectStartDateController.text,
+                      status: _selectedStatus,
+                    );
+
+                    // Adicionar à lista de projetos em andamento
+                    if (_selectedStatus == 'Em andamento') {
+                      inProgressProjects.add(newProject);
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Projeto Criado!')),
+                    );
+
+                    // Navegar para a tela de projetos em andamento
+                    Navigator.pushNamed(context, '/in_progress');
+                  }
+                },
+                child: const Text('Salvar Projeto'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Página de Detalhes do Projeto
+class ProjectDetailsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Recebendo o projeto que foi passado como argumento
+    final Project project =
+        ModalRoute.of(context)!.settings.arguments as Project;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Detalhes do Projeto'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Nome do Projeto: ${project.name}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Descrição: ${project.description}',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Data de Início: ${project.startDate}',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Status: ${project.status}',
+              style: const TextStyle(fontSize: 18),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
