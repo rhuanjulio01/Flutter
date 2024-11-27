@@ -133,22 +133,6 @@ class HomePage extends StatelessWidget {
                 child: const Text('Projetos em Andamento',
                     style: TextStyle(fontSize: 18)),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF004347),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/details');
-                },
-                child:
-                    const Text('Ver Detalhes', style: TextStyle(fontSize: 18)),
-              ),
             ],
           ),
         ),
@@ -330,8 +314,8 @@ class ProjectDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Nome do Projeto: ${project.name}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              'Nome: ${project.name}',
+              style: const TextStyle(fontSize: 24),
             ),
             const SizedBox(height: 10),
             Text(
